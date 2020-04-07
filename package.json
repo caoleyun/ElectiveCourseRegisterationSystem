@@ -1,0 +1,19 @@
+{
+  "name": "elective-course-registeration-stytem",
+  "version": "1.0.0",
+  "description": "NodeJS + Express + MongoDB + Mongoose + Ejs + BootStrap + jQuery",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "乐云",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.0.2",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "formidable": "^1.2.2",
+    "mongoose": "^5.9.7",
+    "node-xlsx": "^0.15.0"
+  }
+}

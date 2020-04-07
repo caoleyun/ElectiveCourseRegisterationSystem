@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html class='no-js' lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
+  <title>管理员面板 - XXXX选修课报名系统</title>
+  <link href="/css/application-a07755f5.css" rel="stylesheet" type="text/css" />
+  <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+  <link href="/css/iconfont.css" rel="stylesheet" type="text/css"></head>
+<body class='main page'>
+  <%- include("../include/header.ejs",{}) %>
+
+  <div id='wrapper'>
+    <%- include("../include/sidebar.ejs",{}) %>
+    <section id='tools'>
+      <ul class='breadcrumb' id='breadcrumb'>
+        <li>
+          <a href="/admin/student">学生清单</a>
+        </li>
+        <li class="active">导入学生</li>
+      </ul>
+    </section>
+    <div id='content'>
+      <div class='panel panel-default'>
+        <div class='panel-heading'>
+          请导入Excel表格
+        </div>
+        <div class='panel-body'>
+            <p>
+              请上传符合规定的Excel表格，形式是每个年级一个子表，每列依次是：学号、姓名、性别。
+            </p>
+            
+            <!-- 包裹在iframe里面，体验更好。因为我们是同步上传文件，不是Ajax，防止页面跳转的奇淫技巧就是iframe -->
+            <!-- <iframe src="/template/excelform.html" frameborder="0" width="500"></iframe> -->
+             <form id="fileform" action="/admin/student/import" method="post" enctype="multipart/form-data">
+              <p>
+                <input type="file"  class="btn" name="studentexcel" />
+              </p>
+              <p>
+                <input type="submit" class="btn btn-success" value="上传文件" />
+              </p>
+            </form>
+            
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+  <script type="text/javascript">
+    $("#fileform").on("submit",function(){
+      if(!confirm("请注意，上传Excel将彻底重置数据库！")){
+        //return false将会阻止表单的继续上传
+        return false;
+      }
+
+      if(!confirm("【危险】你真的要重新上传数据么？")){
+        //return false将会阻止表单的继续上传
+        return false;
+      }
+    });
+  </script>
+</body>
+</html>
