@@ -9,6 +9,11 @@
   <link href="/css/iconfont.css" rel="stylesheet" type="text/css"></head>
   <link rel="stylesheet" href="/css/ui.jqgrid.css">
   <link rel="stylesheet" href="/css/jquery-ui-1.8.16.custom.css">
+  
+  <style type="text/css">
+    
+  </style>
+
 <body class='main page'>
   <!-- Navbar -->
   <%- include("include/header.ejs",{}) %>
@@ -83,11 +88,79 @@
         cellsubmit : "clientArray",
         height:300,
         afterSaveCell : function(rowid, cellname, value, iRow, iCol){
-            //得到id值
-            var id = $("#list").getCell(iRow,0);
-            console.log(id, cellname, value);
+            //因为设置colModel将sid这列加上了key:true。rowid就是主键，rowid小格格里面填写的内容就是主键。
+                //发出请求
+                $.post("/student/" + rowid , {
+                    "cellname" : cellname,
+                    "value" : value
+                },function(data){
+                    if(data.result == 1){
+                        new Tip("更改成功");
+                        // alert("更改成功");
+
+                    }else if(data.result == -1){
+                        new Tip("你试图更改" + rowid + "，而数据库中没有这个条目。很有可能是其他老师在同时操作，请刷新页面！");
+                        // alert("你试图更改" + rowid + "，而数据库中没有这个条目。很有可能是其他老师在同时操作，请刷新页面！");
+                    }else if(data.result == -2){
+                        new Tip("服务器错误，请联系管理员，错误代码-2。");
+                        // alert("服务器错误，请联系管理员，错误代码-2。");
+                    }
+                });
         }
     });
+
+
   </script>
+
+ <!-- //封装一个 修改成功的 小提示 -->
+  <script type="text/javascript">
+
+    //封装一个 修改成功的 小提示 
+    function Tip(title){
+      this.title=title;
+      this.init();
+    }
+
+    Tip.prototype.init=function(){
+      //创建DOM 添加属性
+      // this.dom=$("<div class='info_tip'></div>");
+      //追加DOM元素
+      $("body").append("<div class='info_tip'>"+this.title+"</div>");
+      $(".info_tip").css({
+          "width": "198px",
+          "height": "50px",
+          "position": "relative",
+          "left": "50%",
+          "top": "10px",
+          "background-color": "#00eaff3b",
+          "transform": "translate(-50%)",
+          "text-align":"center",
+          "line-height":"50px",
+          "color":"#b60cf9"
+        });
+      this.fly();//向上飞
+    }
+
+    Tip.prototype.fly=function(){
+      let self=this;
+      $(".info_tip").animate({
+        'top':"-40px",
+        '-moz-opacity':0,
+        '-khtml-opacity':0,
+        'opacity':0
+      },1000,function(){
+        self.none();
+      });
+    }
+
+    Tip.prototype.none=function(){
+      $(".info_tip").remove();
+    }
+
+   
+
+
+  </script>
+
 </body>
 </html>

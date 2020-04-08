@@ -18,9 +18,8 @@ app.get ("/admin/student/import",adminCtrl.showAdminStudentImport);	//管理员�
 app.post("/admin/student/import",adminCtrl.doAdminStudentImport);	//管理员界面
 app.get ("/admin/course"		,adminCtrl.showAdminCourse);	//管理员界面
 app.get ("/admin/report"		,adminCtrl.showAdminReport);	//管理员界面
-// app.get ("/student"		        ,adminCtrl.getAllStudent);		//得到所有学生
- 
-
+app.get ("/student"		        ,adminCtrl.getAllStudent);		//得到所有学生
+ app.post  ("/student/:sid"			,adminCtrl.updateStudent);		//修改某个学生
 
 //静态资源文件
 app.use(express.static("public"));

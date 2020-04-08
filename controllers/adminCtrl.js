@@ -1,7 +1,7 @@
 var formidable = require('formidable');
 var path = require("path");
 var fs = require("fs");
-// var url = require("url");
+var url = require("url");
 var xlsx = require('node-xlsx');
 var Student = require("../models/Student.js");
 
@@ -96,33 +96,83 @@ exports.doAdminStudentImport = function(req,res){
 }
 
 
-// //全部学生的数据，被jqGrid限制了API形式。
-// //并且这个接口是用GET请求发送来的
-// //如同： student?_search=false&nd=1490872998973&rows=2&page=1&sidx=sid&sord=asc
-// exports.getAllStudent = function(req,res){
-//     //拿到参数
-//     var rows = url.parse(req.url,true).query.rows;
-//     var page = url.parse(req.url,true).query.page;
-//     var sidx = url.parse(req.url,true).query.sidx;
-//     var sord = url.parse(req.url,true).query.sord;
+//全部学生的数据，被jqGrid限制了API形式。
+//并且这个接口是用GET请求发送来的
+//如同： student?_search=false&nd=1490872998973&rows=2&page=1&sidx=sid&sord=asc
+exports.getAllStudent = function(req,res){
 
-//     var sordNumber = sord == "asc" ? 1 : -1;
+    //拿到参数
+	    var rows = url.parse(req.url,true).query.rows;
+	    var page = url.parse(req.url,true).query.page;
+	    var sidx = url.parse(req.url,true).query.sidx;
+	    var sord = url.parse(req.url,true).query.sord;
 
-//     //分页算法
-//     Student.count({},function(err,count){
-//         //总页数
-//         var total = Math.ceil(count / rows);
-//         //排序、分页
-//         //参考了博客：http://blog.csdn.net/zk437092645/article/details/9345885
-//         var sortobj = {};
-//         //动态绑定一个键
-//         sortobj[sidx] = sordNumber;
-//         //这是一个结合了排序、分页的大检索
-//         //为什么要暴露records、page、total、rows这些键，都是jqGrid要求的
-//         //请看     http://blog.mn886.net/jqGrid/ ，  左侧点击新手demo
-//         //它的API：http://blog.mn886.net/jqGrid/JSONData
-//         Student.find({}).sort(sortobj).limit(rows).skip(rows * (page - 1)).exec(function(err,results){
-//             res.json({"records" : count, "page" : page, "total" : total , "rows" : results});
-//         });
-//     });
-// }
+	    var sordNumber = sord == "asc" ? 1 : -1;
+
+    //分页算法
+    Student.count({},function(err,count){
+
+        //总页数
+        var total = Math.ceil(count / rows);
+        //排序、分页
+        //参考了博客：http://blog.csdn.net/zk437092645/article/details/9345885
+        var sortobj = {};
+        //动态绑定一个键
+        sortobj[sidx] = sordNumber;
+        //这是一个结合了排序、分页的大检索
+        //为什么要暴露records、page、total、rows这些键，都是jqGrid要求的
+        //请看     http://blog.mn886.net/jqGrid/ ，  左侧点击新手demo
+        //它的API：http://blog.mn886.net/jqGrid/JSONData
+        
+
+        Student.find({}).sort(sortobj).skip(rows * (page - 1)).limit( parseInt(rows) ).exec(function(err,results){
+            res.json({"records" : count, "page" : page, "total" : total , "rows" : results});
+        });
+
+       
+
+
+    });
+}
+
+
+
+
+//修改某个学生
+exports.updateStudent = function(req,res){
+    //学号
+    var sid = parseInt(req.params.sid);
+    //得到表单的信息，这部分信息是jQuery通过Ajax发送的
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+        //要更改的键名
+        var key = fields.cellname;
+        //要更改的键的值
+        var value = fields.value;
+
+        //真的更改
+        Student.find({"sid" : sid} , function(err,results){
+            if(err){
+                res.send({"result" : -2});  //-2表示数据库错误
+                return;
+            }
+            if(results.length == 0){
+                res.send({"result" : -1});  //-1表示查无此人，无法更改
+                return;
+            }
+            //得到学生
+            var thestudent = results[0];
+            //改
+            thestudent[key] = value;
+            //持久化
+            thestudent.save(function(err){
+                if(err){
+                    res.send({"result" : -2});  //-2表示数据库错误
+                    return;
+                }
+
+                res.send({"result" : 1});   //1表示成功
+            });
+        });
+    });
+}
