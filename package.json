@@ -9,6 +9,7 @@
   "author": "乐云",
   "license": "ISC",
   "dependencies": {
+    "date-format": "^3.0.0",
     "ejs": "^3.0.2",
     "express": "^4.17.1",
     "express-session": "^1.17.0",

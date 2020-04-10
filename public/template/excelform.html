@@ -6,3 +6,18 @@
 	  <input type="submit" class="btn btn-success" value="上传文件" />
 	</p>
 </form>
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript">
+    $("#fileform").on("submit",function(){
+      if(!confirm("请注意，上传Excel将彻底重置数据库！")){
+        //return false将会阻止表单的继续上传
+        return false;
+      }
+
+      if(!confirm("【危险】你真的要重新上传数据么？")){
+        //return false将会阻止表单的继续上传
+        return false;
+      }
+    });
+  </script>

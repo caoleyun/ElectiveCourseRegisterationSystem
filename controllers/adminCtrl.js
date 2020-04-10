@@ -4,6 +4,7 @@ var fs = require("fs");
 var url = require("url");
 var xlsx = require('node-xlsx');
 var Student = require("../models/Student.js");
+var dateformat = require('date-format');
 
 exports.showAdminDashborad = function(req,res){
 	res.render("admin/index",{
@@ -23,6 +24,12 @@ exports.showAdminStudent = function(req,res){
 // 	});
 // }
 
+exports.showAdminStudentAdd = function(req,res){
+    res.render("admin/student/add",{
+        page : "student"
+    });
+}
+
 
 exports.showAdminStudentImport = function(req,res){
 	res.render("admin/student/import",{
@@ -31,11 +38,11 @@ exports.showAdminStudentImport = function(req,res){
 }
 
 
-exports.showAdminCourse = function(req,res){
-	res.render("admin/course",{
-		page : "course"
-	});
-}
+// exports.showAdminCourse = function(req,res){
+// 	res.render("admin/course",{
+// 		page : "course"
+// 	});
+// }
 
 exports.showAdminReport = function(req,res){
 	res.render("admin/report",{
@@ -52,7 +59,6 @@ exports.doAdminStudentImport = function(req,res){
     form.parse(req, function(err, fields, files) {
     	if(!files.studentexcel.name){
     		res.send("对不起，请上传文件！");
-    		return;
     	}
 
     	//检查拓展名是否正确
@@ -106,11 +112,34 @@ exports.getAllStudent = function(req,res){
 	    var page = url.parse(req.url,true).query.page;
 	    var sidx = url.parse(req.url,true).query.sidx;
 	    var sord = url.parse(req.url,true).query.sord;
+        var keyword = url.parse(req.url,true).query.keyword;
 
 	    var sordNumber = sord == "asc" ? 1 : -1;
 
+
+    //根据是否有keyword的GET请求参数，来决定一接口两用。
+    //如果用户传了keyword，此时表示模糊查询
+    //如果用户没有传keyword，此时表示全部查询
+    if(keyword === undefined || keyword == ""){
+        var findFiler = {}; //空对象，检索全部
+    }else{
+        //我们使用正则表达式的构造函数来将字符串转为正则对象
+        //我们发现eval也同样好用var regexp = eval("/" + keyword + "/g");
+        //★★★★★★★★★★★★★★★★★★★★★★★★★
+        //模糊查询最有价值语句：MVS， most valuble statement
+        var regexp = new RegExp(keyword , "g");
+        //★★★★★★★★★★★★★★★★★★★★★★★★★
+        var findFiler = {
+            $or : [
+                {"sid": regexp},
+                {"name": regexp},
+                {"grade": regexp}
+            ]
+        }
+    }
+
     //分页算法
-    Student.count({},function(err,count){
+    Student.count(findFiler,function(err,count){
 
         //总页数
         var total = Math.ceil(count / rows);
@@ -125,7 +154,7 @@ exports.getAllStudent = function(req,res){
         //它的API：http://blog.mn886.net/jqGrid/JSONData
         
 
-        Student.find({}).sort(sortobj).skip(rows * (page - 1)).limit( parseInt(rows) ).exec(function(err,results){
+        Student.find(findFiler).sort(sortobj).skip(rows * (page - 1)).limit( parseInt(rows) ).exec(function(err,results){
             res.json({"records" : count, "page" : page, "total" : total , "rows" : results});
         });
 
@@ -175,4 +204,176 @@ exports.updateStudent = function(req,res){
             });
         });
     });
+}
+
+
+
+//增加学生
+exports.addStudent = function(req,res){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+        if(err){
+            res.json({"result" : -1});      //-1表示服务器错误
+            return;
+        }
+        //验证数据有效性
+
+        //① 验证学号必须是9位数字
+        var sid = fields.sid;
+        //验证9位是不是满足
+        if(!/^[\d]{9}$/.test(sid)){
+            res.send({"result" : -2});      //-2表示用户名不合规范
+            return;
+        }
+
+        //② 验证姓名是否合法
+        var nameTxt = fields.name;
+        //验证
+        if(!/^[\u4E00-\u9FA5]{2,5}(?:·[\u4E00-\u9FA5]{2,5})*$/.test(nameTxt)){
+            res.send({"result" : -4});      //-4表示用户名不合规范
+            return;
+        }
+
+
+        //③ 验证年级是否合法
+        //年级
+        var grade = fields.grade
+        //验证
+        if(!grade){
+            res.json({"result" : -5});  //-5表示年级没有选择
+            return;
+        }
+
+        //④ 验证密码强度
+        //姓名
+        var password = fields.password;
+        //验证
+        if(checkStrength(password) != 3){
+            res.json({"result" : -6});  //密码强度有问题
+            return;
+        }
+
+
+        //上网抄的正则密码强度验证http://www.cnblogs.com/yjzhu/p/3394717.html
+        function checkStrength(password){
+            //积分制
+            var lv = 0;
+            if(password.match(/[a-z]/g)){lv++;}
+            if(password.match(/[0-9]/g)){lv++;}
+            if(password.match(/(.[^a-z0-9])/g)){lv++;}
+            if(password.length < 6){lv=0;}
+            if(lv > 3){lv=3;}
+
+            return lv;
+        }
+
+        //⑤ 验证学号是否冲突
+        Student.count({"sid" : sid},function(err,count){
+            if(err){
+                res.json({"result" : -1});
+                return;
+            }
+            if(count != 0){
+                res.json({"result" : -3});  //-3表示用户名被占用
+                return;
+            }
+
+
+            var s = new Student({
+                sid    : fields.sid,
+                name   : fields.name,
+                grade  : fields.grade,
+                password : fields.password
+            });
+            s.save(function(err){
+                if(err){
+                    res.json({"result" : -1});
+                    return;
+                }
+                res.json({"result" : 1});
+            });
+        });
+    });
+}
+
+
+
+
+//propfind类型接口，检查学生是否存在
+exports.checkStudentExist = function(req,res){
+    //拿到参数
+    var sid = parseInt(req.params.sid);
+    if(!sid){
+        res.json({"result" : -1});
+        return;
+    }
+    //分页算法，得到总页数
+    Student.count({"sid" : sid},function(err,count){
+        if(err){
+             res.json({"result" : -1});
+             return;
+        }
+        res.json({"result" : count});
+    });
+};
+
+
+exports.removeStudent = function(req,res){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+        //直接命令模块做事情，删除元素。
+        Student.remove({"sid" : fields.arr},function(err,obj){
+            if(err){
+                res.json({"result" : -1});
+            }else{
+              
+                res.json({"result" : obj.n});
+            }
+        })
+    });
+}
+
+
+
+//下载全部学生表格
+exports.downloadStudentXlsx = function(req,res){
+    var TableR = [];
+    var gradeArr = ["初一","初二","初三","高一","高二","高三"];
+    
+
+    //迭代器！强行把异步函数变为同步的！当读取完毕初一的时候，才去读取初二……
+    //i为0、1、2、3、4、5，表示读取初一、初二……高三的信息
+    function iterator(i){
+        if(i == 6){
+            //此时TableR中已经是6个年级的大数组了！
+            var buffer = xlsx.build(TableR);
+            //生成一个文件，我们将文件名设置的漂亮一点，是当前的时间
+            //
+            var filename = dateformat('学生清单yyyy年MM月dd日hhmmssSSS', new Date());
+            fs.writeFile("./public/xlsx/" + filename + ".xlsx",buffer,function(err){
+                //重定向！让用户的这次HTTP请求不再指向http://127.0.0.1:3000/admin/student/download
+                //而是直接跳转到这个xlsx文件上
+                res.redirect("/xlsx/" + filename + ".xlsx");
+            });
+            return;
+        }
+         //整理数据
+        Student.find({"grade":gradeArr[i]},function(err,results){
+            var sheetR = [];
+            results.forEach(function(item){
+                sheetR.push([
+                    item.sid,
+                    item.name,
+                    item.grade,
+                    item.password
+                ]);
+            });
+
+            TableR.push({"name" : gradeArr[i], data : sheetR});
+            //迭代！
+            iterator(++i);
+        });
+    }
+
+    iterator(0);
 }

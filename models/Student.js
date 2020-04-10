@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 //创建schema
 var studentSchema = new mongoose.Schema({
-	"sid" 				: Number,
+	"sid" 				: String,
 	"name" 				: String,
 	"grade" 			: String,
 	"password" 			: String,
