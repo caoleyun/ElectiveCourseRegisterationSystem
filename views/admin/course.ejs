@@ -6,7 +6,10 @@
   <title>管理员面板 - XXXX选修课报名系统</title>
   <link href="/css/application-a07755f5.css" rel="stylesheet" type="text/css" />
   <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-  <link href="/css/iconfont.css" rel="stylesheet" type="text/css"></head>
+  <link href="/css/iconfont.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/ui.jqgrid.css">
+  <link rel="stylesheet" href="/css/jquery-ui-1.8.16.custom.css">
+</head>
 <body class='main page'>
   <!-- Navbar -->
   <%- include("include/header.ejs",{}) %>
@@ -54,7 +57,7 @@
   <script type="text/javascript" src="/js/bootstrap.js"></script>
   <script type="text/javascript" src="/js/grid.locale-cn.js"></script>
   <script type="text/javascript" src="/js/jquery.jqGrid.src.js"></script>
-  <script type="text/javascript" src="/js/jquery.poshytip.js"></script>
+  <!-- <script type="text/javascript" src="/js/jquery.poshytip.js"></script> -->
   <script type="text/javascript">
        var lastsel3;
         //初始化表格
@@ -129,18 +132,18 @@
 
 
 
-        function showtip(content){
-            $('#info_tip').poshytip({
-                className: 'tip-yellowsimple',
-                content: content,
-                showOn: 'none',
-                alignTo: 'target',
-                alignX: 'inner-left',
-                offsetX: 0,
-                offsetY: 5
-            });
-            $('#info_tip').poshytip("show").poshytip('hideDelayed', 800);
-        }  
+        // function showtip(content){
+        //     $('#info_tip').poshytip({
+        //         className: 'tip-yellowsimple',
+        //         content: content,
+        //         showOn: 'none',
+        //         alignTo: 'target',
+        //         alignX: 'inner-left',
+        //         offsetX: 0,
+        //         offsetY: 5
+        //     });
+        //     $('#info_tip').poshytip("show").poshytip('hideDelayed', 800);
+        // }  
 
 
         //监听框框，input是HTML新事件（jquery已经为我们做到了兼容IE6），表示实时输入，可以将汉字拼音输入过程，比如你打考，此时k、a、o都将被得到。

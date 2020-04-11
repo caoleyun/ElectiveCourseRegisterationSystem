@@ -32,6 +32,9 @@ app.get   ("/admin/course/import"	,adminCourseCtrl.showAdminCourseImport);//导�
 app.get   ("/admin/course/add"		,adminCourseCtrl.showAdminCourseAdd);	//增加学生 界面
 app.post  ("/admin/course/import"	,adminCourseCtrl.doAdminCourseImport);	//增加学生
 app.get   ("/course"				,adminCourseCtrl.getAllCourse);			//得到所有学生
+app.post  ("/admin/course/"			,adminCourseCtrl.updateCourse); 		//编辑学生
+app.delete("/course"		    	,adminCourseCtrl.removeCourse);			//remove学生
+app.post  ("/course"		    	,adminCourseCtrl.addCourse);			//添加课程
 
 //静态资源文件
 app.use(express.static("public"));

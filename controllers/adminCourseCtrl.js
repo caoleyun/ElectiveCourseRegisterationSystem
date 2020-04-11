@@ -112,7 +112,7 @@ exports.getAllCourse = function(req,res){
 
         //模糊查询，全字段查询，不管检索什么字段，都可以检索出来
         //或的逻辑。要么id匹配，要么是name
-        Course.find(findFiler).sort(sortobj).limit(rows).skip(rows * (page - 1)).exec(function(err,results){
+        Course.find(findFiler).sort(sortobj).limit(parseInt(rows)).skip(rows * (page - 1)).exec(function(err,results){
             res.json({"records" : count, "page" : page, "total" : total , "rows" : results});
         });
     });
@@ -172,7 +172,7 @@ exports.removeCourse = function(req,res){
                 res.json({"result" : -1});
             }else{
               
-                res.json({"result" : obj.result.n});
+                res.json({"result" : obj.n});
             }
         })
     });

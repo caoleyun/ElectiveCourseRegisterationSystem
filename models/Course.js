@@ -5,7 +5,7 @@ var courseSchema = new mongoose.Schema({
 	"cid" 			: String,		//字符串的好处是方便正则表达式的筛选
 	"name" 			: String,
 	"dayofweek" 	: String,
-	"number" 		: Number,
+	"number" 		: String,
 	"allow" 		: [String],
 	"teacher" 		: String,
 	"briefintro"	: String,

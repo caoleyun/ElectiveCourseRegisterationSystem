@@ -124,8 +124,11 @@
           "success" : function(data){
             if(data.result == -3){
               alert("编号冲突！");
+            }else if(data.result == -1){
+              alert("服务器错误");
             }else{
               alert("提交成功！");
+              
             }
           }
         });
