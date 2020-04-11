@@ -2,12 +2,21 @@ var express = require("express");
 var mongoose = require('mongoose');
 var adminCtrl = require("./controllers/adminCtrl.js");
 var adminCourseCtrl = require("./controllers/adminCourseCtrl.js");
-
+var mainctrl = require("./controllers/mainctrl.js");
+var session = require('express-session');
 
 //创建app
 var app = express();
 //链接数据库，斜杠后面是数据库的名字
 mongoose.connect('mongodb://localhost/ElectiveCourseRegisterationSystem');
+
+//使用session
+app.use(session({ 
+	secret: 'ElectiveCourseRegisterationSystem', 
+	cookie: { maxAge: 1000 * 60 * 20 },
+	resave: false ,  
+	saveUninitialized : true
+}));
 
 //设置模板引擎
 app.set("view engine","ejs");
@@ -35,6 +44,14 @@ app.get   ("/course"				,adminCourseCtrl.getAllCourse);			//得到所有学生
 app.post  ("/admin/course/"			,adminCourseCtrl.updateCourse); 		//编辑学生
 app.delete("/course"		    	,adminCourseCtrl.removeCourse);			//remove学生
 app.post  ("/course"		    	,adminCourseCtrl.addCourse);			//添加课程
+
+
+app.get   ("/login"					,mainctrl.showLogin);	//显示登录表单
+app.post  ("/login"				    ,mainctrl.doLogin);		//处理登录
+app.get   ("/"						,mainctrl.showIndex);	//显示报名表格
+app.get   ("/logout"				,mainctrl.doLogout);	//退出登录
+app.get   ("/changepw"				,mainctrl.showChangepw);//更改密码
+app.post  ("/changepw"				,mainctrl.doChangepw);	//更改密码
 
 //静态资源文件
 app.use(express.static("public"));
