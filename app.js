@@ -21,6 +21,8 @@ app.use(session({
 //设置模板引擎
 app.set("view engine","ejs");
 
+
+
 //中间件，路由清单
 app.get ("/admin"				,adminCtrl.showAdminDashborad);	//管理员界面 选课状态页面
 app.get ("/admin/student"		,adminCtrl.showAdminStudent);	//管理员界面  学生管理页面 
@@ -47,11 +49,21 @@ app.post  ("/course"		    	,adminCourseCtrl.addCourse);			//添加课程
 
 
 app.get   ("/login"					,mainctrl.showLogin);	//显示登录表单
+
 app.post  ("/login"				    ,mainctrl.doLogin);		//处理登录
 app.get   ("/"						,mainctrl.showIndex);	//显示报名表格
 app.get   ("/logout"				,mainctrl.doLogout);	//退出登录
 app.get   ("/changepw"				,mainctrl.showChangepw);//更改密码
 app.post  ("/changepw"				,mainctrl.doChangepw);	//更改密码
+
+app.get   ("/check"					,mainctrl.check);		//检查课程是否能报名
+
+app.post  ("/baoming"               ,mainctrl.baoming);		//报名
+app.post  ("/tuibao"                ,mainctrl.tuibao);		//退报
+
+
+
+
 
 //静态资源文件
 app.use(express.static("public"));

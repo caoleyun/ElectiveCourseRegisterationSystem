@@ -6,7 +6,8 @@ var studentSchema = new mongoose.Schema({
 	"name" 				: String,
 	"grade" 			: String,
 	"password" 			: String,
-	"changedPassword"   : {type : Boolean , default : false}
+	"changedPassword"   : {type : Boolean , default : false},
+	"mycourses"			: [String]
 });
 
 //接受一个参数，是表格上传的那个6项的数组
