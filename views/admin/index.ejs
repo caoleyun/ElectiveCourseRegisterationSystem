@@ -6,35 +6,84 @@
   <title>管理员面板 - XXXX选修课报名系统</title>
   <link href="/css/application-a07755f5.css" rel="stylesheet" type="text/css" />
   <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-  <link href="/css/iconfont.css" rel="stylesheet" type="text/css"></head>
+  <link href="/css/iconfont.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/dcalendar.picker.css"/>
+</head>
 <body class='main page'>
   <%- include("include/header.ejs",{}) %>
   <div id='wrapper'>
     <%- include("include/sidebar.ejs",{}) %>
     <section id='tools'>
       <ul class='breadcrumb' id='breadcrumb'>
-        <li class='title'>Dashboard</li>
-        <li>
-          <a href="#">Lorem</a>
-        </li>
-        <li class='active'>
-          <a href="#">ipsum</a>
-        </li>
+        <li class='title'>报名时限</li>
       </ul>
     </section>
     <!-- Content -->
     <div id='content'>
       <div class='panel panel-default'>
         <div class='panel-heading'>
-          Hierapolis Rocks!
+          报名时限
         </div>
         <div class='panel-body'>
  
+           <p>开始日期：<input class='mydatepicker' id="startText" type='text'/> </p> 
+           <p>结束日期：<input class='mydatepicker' id="endText" type='text'/> </p> 
+            <button class="btn alert-info" id="mystart">开始选课</button>
+            <button class=" btn alert-danger" id="myend" style="margin-left:78px;">结束选课</button>
         </div>
       </div>
     </div>
   </div>
   <script type="text/javascript" src="js/jquery.min.js"></script>
   <script type="text/javascript" src="js/bootstrap.js"></script>
+  <script type="text/javascript" src="/js/dcalendar.picker.js"></script>  
+<script>
+  $('.mydatepicker').dcalendarpicker(); //初始化日期选择器
+
+
+  //监听 开始选课按钮
+  $("#mystart").click(function(){
+    //得到 开始日期和 结束日期 
+    var startText=$("#startText").val();
+    var endText=$("#endText").val();
+    // console.log(startText);
+    //年月日
+    var startYear=startText.split("/")[2];
+    var startMonth=startText.split("/")[0];
+    var startDay=startText.split("/")[1];
+
+     var endYear=endText.split("/")[2];
+    var endMonth=endText.split("/")[0];
+    var endDay=endText.split("/")[1];
+
+    // //判断 结束时间是否 后与 开始时间
+    // if(startYear>endYear||(startYear<=endYear&&startMonth>=endMonth)&&startDay<=endDay){
+      
+    // }else{
+
+    // }
+    // if(startYear>endYear){
+    //   alert("对不起，您选择的结束日期大于开始日期。请重新选择");
+    // }else if(startYear==endYear){
+    //   if(startMonth>endMonth){
+    //     alert("对不起，您选择的结束日期大于开始日期。请重新选择");
+    //   }else if(startMonth==endMonth){
+    //     if(startDay>=endDay){
+    //       alert("对不起，您选择的结束日期等于开始日期。请重新选择");
+    //     }else if(startDay<endDay){
+          
+    //     }
+    //   }else if(startMonth<endMonth){
+
+    //   }
+    // }else if(startYear<endYear){
+
+    // }
+    // console.log(startYear);
+    // console.log(endYear);
+
+  });
+</script>
+
 </body>
 </html>

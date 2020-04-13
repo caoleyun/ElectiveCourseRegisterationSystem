@@ -107,6 +107,10 @@ exports.showIndex = function(req,res){
 
 
 exports.doLogout = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
     req.session.login = false;
     req.session.sid = "";
     res.redirect("/login");
@@ -132,6 +136,10 @@ exports.showChangepw = function(req,res){
 
 //更改密码
 exports.doChangepw = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
         var pw = fields.pw;
@@ -156,10 +164,10 @@ exports.doChangepw = function(req,res){
 //检查课程是否能报名，这个函数真的很强大！！决定了index页面上的课程按钮的形态、文本、是否可用
 exports.check = function(req,res){
     //登录验证！如果你没有携带login的session
-    // if(req.session.login != true){
-    //     res.redirect("/login");
-    //     return;
-    // }
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
     var results = {};
 
     //找到我这个人
@@ -215,6 +223,10 @@ exports.check = function(req,res){
 
 //报名
 exports.baoming = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
     //学号
     var sid = req.session.sid;
     //要报名的课程编号
@@ -239,6 +251,10 @@ exports.baoming = function(req,res){
 
 //退报
 exports.tuibao = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
     //学号
     var sid = req.session.sid;
     //要报名的课程编号
@@ -257,6 +273,42 @@ exports.tuibao = function(req,res){
                     })
                 })
             });
+        });
+    });
+}
+
+//我的选课清单 页面
+exports.showMycourseslist=function(req,res){
+     res.render("mycourseslist",{
+        //从session中得到sid。session的机理对程序员透明的，
+        //我们之前只需要设置过session：  req.session.sid = sid;
+        //此时就能拿出来。至于原理如何，编程的时候不需要考虑。面试的时候才考虑。 
+        "sid" : req.session.sid,
+        "name" : req.session.name,
+        "grade" : req.session.grade
+    });
+}
+
+// 我的选课 请求数据
+exports.doMycourseslist=function(req,res){
+    //登录验证！如果你没有携带login的session
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    var results = {};
+
+    //找到我这个人
+    Student.find({"sid" : req.session.sid},function(err,students){
+        var thestudent = students[0];
+        //已经报名的课程序号数组
+        var mycourses = thestudent.mycourses;
+        
+
+        //查询所有课程，查询一次
+        Course.find({'cid':{ '$in':mycourses}},function(err,courses){
+
+            res.json({"results":courses});
         });
     });
 }

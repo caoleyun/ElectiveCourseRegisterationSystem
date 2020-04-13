@@ -7,12 +7,28 @@ var Student = require("../models/Student.js");
 var dateformat = require('date-format');
 
 exports.showAdminDashborad = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
 	res.render("admin/index",{
 		page : "index"
 	});
 }
 
 exports.showAdminStudent = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
 	res.render("admin/student",{
 		page : "student"
 	});
@@ -25,6 +41,14 @@ exports.showAdminStudent = function(req,res){
 // }
 
 exports.showAdminStudentAdd = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     res.render("admin/student/add",{
         page : "student"
     });
@@ -32,6 +56,14 @@ exports.showAdminStudentAdd = function(req,res){
 
 
 exports.showAdminStudentImport = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
 	res.render("admin/student/import",{
 		page : "student"
 	});
@@ -45,6 +77,14 @@ exports.showAdminStudentImport = function(req,res){
 // }
 
 exports.showAdminReport = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
 	res.render("admin/report",{
 		page : "report"
 	});
@@ -53,6 +93,14 @@ exports.showAdminReport = function(req,res){
 
 //执行表格的上传
 exports.doAdminStudentImport = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
 	var form = new formidable.IncomingForm();
 	form.uploadDir = "./uploads";
 	form.keepExtensions = true;
@@ -106,7 +154,14 @@ exports.doAdminStudentImport = function(req,res){
 //并且这个接口是用GET请求发送来的
 //如同： student?_search=false&nd=1490872998973&rows=2&page=1&sidx=sid&sord=asc
 exports.getAllStudent = function(req,res){
-
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     //拿到参数
 	    var rows = url.parse(req.url,true).query.rows;
 	    var page = url.parse(req.url,true).query.page;
@@ -169,6 +224,14 @@ exports.getAllStudent = function(req,res){
 
 //修改某个学生
 exports.updateStudent = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     //学号
     var sid = parseInt(req.params.sid);
     //得到表单的信息，这部分信息是jQuery通过Ajax发送的
@@ -210,6 +273,14 @@ exports.updateStudent = function(req,res){
 
 //增加学生
 exports.addStudent = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
         if(err){
@@ -301,6 +372,14 @@ exports.addStudent = function(req,res){
 
 //propfind类型接口，检查学生是否存在
 exports.checkStudentExist = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     //拿到参数
     var sid = parseInt(req.params.sid);
     if(!sid){
@@ -319,6 +398,14 @@ exports.checkStudentExist = function(req,res){
 
 
 exports.removeStudent = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
         //直接命令模块做事情，删除元素。
@@ -337,6 +424,14 @@ exports.removeStudent = function(req,res){
 
 //下载全部学生表格
 exports.downloadStudentXlsx = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     var TableR = [];
     var gradeArr = ["初一","初二","初三","高一","高二","高三"];
     

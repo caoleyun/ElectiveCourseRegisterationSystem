@@ -5,6 +5,14 @@ var mongoose = require("mongoose");
 var url = require("url");
 
 exports.showAdminCourse = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     res.render("admin/course",{
         page : "course"
     });
@@ -13,12 +21,28 @@ exports.showAdminCourse = function(req,res){
 
 
 exports.showAdminCourseImport = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     res.render("admin/course/import",{
         page : "course"
     });
 }
 
 exports.showAdminCourseAdd = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     res.render("admin/course/add",{
         page : "course"
     });
@@ -27,6 +51,14 @@ exports.showAdminCourseAdd = function(req,res){
 
 //执行导入JSON数据，进入数据库。这不是Ajax上传接口，是一个同步表单上传接口。
 exports.doAdminCourseImport = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
 	var form = new formidable.IncomingForm();
 	//设置一个上传路径
 	form.uploadDir = "./uploads";
@@ -64,6 +96,10 @@ exports.doAdminCourseImport = function(req,res){
 //并且这个接口是用GET请求发送来的
 //如同： course?_search=false&nd=1490872998973&rows=2&page=1&sidx=sid&sord=asc
 exports.getAllCourse = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
     //拿到参数
     var rows = url.parse(req.url,true).query.rows;  //一页多少条目
     var page = url.parse(req.url,true).query.page;
@@ -122,6 +158,14 @@ exports.getAllCourse = function(req,res){
 
 //修改某个课程
 exports.updateCourse = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     //得到表单的信息，这部分信息是jQuery通过Ajax发送的
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
@@ -164,6 +208,14 @@ exports.updateCourse = function(req,res){
 }
 
 exports.removeCourse = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
         //直接命令模块做事情，删除元素。
@@ -181,6 +233,14 @@ exports.removeCourse = function(req,res){
 
 //增加课程
 exports.addCourse = function(req,res){
+    if(req.session.login != true){
+        res.redirect("/login");
+        return;
+    }
+    if(req.session.sid !== "123456789"){
+         res.render("jump",{});
+         return;
+    }
     var form = new formidable.IncomingForm();
     form.parse(req, function(err, fields, files) {
         if(err){

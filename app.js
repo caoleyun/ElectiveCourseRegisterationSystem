@@ -61,6 +61,9 @@ app.get   ("/check"					,mainctrl.check);		//检查课程是否能报名
 app.post  ("/baoming"               ,mainctrl.baoming);		//报名
 app.post  ("/tuibao"                ,mainctrl.tuibao);		//退报
 
+app.get   ("/mycourseslist"				,mainctrl.showMycourseslist);//我的选课清单 页面
+app.post   ("/mycourseslist"				,mainctrl.doMycourseslist);//我的选课清单 请求数据
+
 
 
 

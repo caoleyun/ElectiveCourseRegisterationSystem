@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>跳转页面</title>
+	<style type="text/css">
+		p{
+			margin:20px auto;
+			width:415px;
+			text-align:center;
+		}
+	</style>
+</head>
+<body>
+	<p id="page_div">对不起，您不是管理员。系统将在5秒后自动跳转到首页</p>
+	<p><a href="/">或直接点击跳转到主页</a></p>
+ 
+	<script language="javascript">
+	    var num = 4; //倒计时的秒数
+	    var URL = "/";
+	    window.setTimeout("doUpdate()", 1000);
+	    function doUpdate(){
+	        if(num != 0){
+	            document.getElementById('page_div').innerHTML = '对不起，您不是管理员。系统将在'+num+'秒后自动跳转到首页' ;
+	            num --;
+	            window.setTimeout("doUpdate()", 1000);
+	        }else{
+	            num = 4;
+	            window.location = URL;
+	        }
+	    }
+	</script>
+</body>
+</html>
